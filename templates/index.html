@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DiabetesPredict — AI Risk Assessment</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+
+  <!-- ░░ Navbar ░░ -->
+  <nav class="navbar">
+    <div class="nav-inner">
+      <div class="brand">
+        <span class="brand-mark">🩺</span>
+        <span class="brand-text">Diabetes<span class="brand-accent">Predict</span></span>
+      </div>
+      <div class="nav-tag">Machine Learning · BRFSS 2021</div>
+    </div>
+  </nav>
+
+  <!-- ░░ Hero ░░ -->
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="hero-badge">✨ AI-Powered Health Screening</div>
+      <h1 class="hero-title">Know your <span class="grad">diabetes risk</span><br />in seconds.</h1>
+      <p class="hero-sub">
+        A machine-learning model trained on 236,000+ real health records estimates your
+        risk across three categories — instantly and privately.
+      </p>
+
+      <!-- Live stats from /model-info -->
+      <div class="stats" id="statsRow">
+        <div class="stat"><div class="stat-num" id="statAcc">—</div><div class="stat-lbl">Accuracy</div></div>
+        <div class="stat"><div class="stat-num" id="statSamples">—</div><div class="stat-lbl">Training Records</div></div>
+        <div class="stat"><div class="stat-num" id="statFeatures">—</div><div class="stat-lbl">Health Features</div></div>
+        <div class="stat"><div class="stat-num" id="statAlgo">—</div><div class="stat-lbl">Algorithm</div></div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="layout">
+
+      <!-- ░░ LEFT: Assessment form ░░ -->
+      <section class="panel form-panel">
+        <div class="panel-head">
+          <h2>Health Assessment</h2>
+          <p>Adjust the controls below, then run the prediction.</p>
+        </div>
+
+        <form id="predForm">
+
+          <!-- Cardiovascular -->
+          <div class="section">
+            <div class="section-title"><span class="dot dot-red"></span> Cardiovascular Health</div>
+            <div class="toggle-grid">
+              <label class="toggle"><span>High Blood Pressure</span><input type="checkbox" name="HighBP"><span class="track"></span></label>
+              <label class="toggle"><span>High Cholesterol</span><input type="checkbox" name="HighChol"><span class="track"></span></label>
+              <label class="toggle"><span>Cholesterol Checked (5y)</span><input type="checkbox" name="CholCheck" checked><span class="track"></span></label>
+              <label class="toggle"><span>Heart Disease / Attack</span><input type="checkbox" name="HeartDiseaseorAttack"><span class="track"></span></label>
+              <label class="toggle"><span>Stroke History</span><input type="checkbox" name="Stroke"><span class="track"></span></label>
+            </div>
+          </div>
+
+          <!-- Lifestyle -->
+          <div class="section">
+            <div class="section-title"><span class="dot dot-amber"></span> Body &amp; Lifestyle</div>
+            <div class="slider-field">
+              <div class="slider-top"><label>Body Mass Index (BMI)</label><output id="out_BMI">26.5</output></div>
+              <input type="range" name="BMI" min="12" max="50" step="0.1" value="26.5" oninput="document.getElementById('out_BMI').textContent=this.value">
+            </div>
+            <div class="toggle-grid">
+              <label class="toggle"><span>Smoker (100+ cigs)</span><input type="checkbox" name="Smoker"><span class="track"></span></label>
+              <label class="toggle"><span>Physically Active</span><input type="checkbox" name="PhysActivity" checked><span class="track"></span></label>
+              <label class="toggle"><span>Eats Fruits Daily</span><input type="checkbox" name="Fruits" checked><span class="track"></span></label>
+              <label class="toggle"><span>Eats Veggies Daily</span><input type="checkbox" name="Veggies" checked><span class="track"></span></label>
+              <label class="toggle"><span>Heavy Alcohol Use</span><input type="checkbox" name="HvyAlcoholConsump"><span class="track"></span></label>
+              <label class="toggle"><span>Difficulty Walking</span><input type="checkbox" name="DiffWalk"><span class="track"></span></label>
+            </div>
+          </div>
+
+          <!-- Healthcare -->
+          <div class="section">
+            <div class="section-title"><span class="dot dot-cyan"></span> Healthcare Access</div>
+            <div class="toggle-grid">
+              <label class="toggle"><span>Has Healthcare Coverage</span><input type="checkbox" name="AnyHealthcare" checked><span class="track"></span></label>
+              <label class="toggle"><span>Skipped Doctor (cost)</span><input type="checkbox" name="NoDocbcCost"><span class="track"></span></label>
+            </div>
+            <div class="slider-field">
+              <div class="slider-top"><label>General Health</label><output id="out_GenHlth">Good (3)</output></div>
+              <input type="range" name="GenHlth" min="1" max="5" step="1" value="3"
+                     oninput="document.getElementById('out_GenHlth').textContent=['','Excellent (1)','Very Good (2)','Good (3)','Fair (4)','Poor (5)'][this.value]">
+            </div>
+            <div class="slider-field">
+              <div class="slider-top"><label>Poor Mental-Health Days (last 30)</label><output id="out_MentHlth">0</output></div>
+              <input type="range" name="MentHlth" min="0" max="30" step="1" value="0" oninput="document.getElementById('out_MentHlth').textContent=this.value">
+            </div>
+            <div class="slider-field">
+              <div class="slider-top"><label>Poor Physical-Health Days (last 30)</label><output id="out_PhysHlth">0</output></div>
+              <input type="range" name="PhysHlth" min="0" max="30" step="1" value="0" oninput="document.getElementById('out_PhysHlth').textContent=this.value">
+            </div>
+          </div>
+
+          <!-- Demographics -->
+          <div class="section">
+            <div class="section-title"><span class="dot dot-violet"></span> Demographics</div>
+            <div class="seg-field">
+              <label>Sex</label>
+              <div class="segment">
+                <input type="radio" name="Sex" id="sexF" value="0" checked><label for="sexF">Female</label>
+                <input type="radio" name="Sex" id="sexM" value="1"><label for="sexM">Male</label>
+              </div>
+            </div>
+            <div class="slider-field">
+              <div class="slider-top"><label>Age Group</label><output id="out_Age">50–54</output></div>
+              <input type="range" name="Age" min="1" max="13" step="1" value="7"
+                     oninput="document.getElementById('out_Age').textContent=['','18–24','25–29','30–34','35–39','40–44','45–49','50–54','55–59','60–64','65–69','70–74','75–79','80+'][this.value]">
+            </div>
+            <div class="slider-field">
+              <div class="slider-top"><label>Education Level</label><output id="out_Education">5 / 6</output></div>
+              <input type="range" name="Education" min="1" max="6" step="1" value="5" oninput="document.getElementById('out_Education').textContent=this.value+' / 6'">
+            </div>
+            <div class="slider-field">
+              <div class="slider-top"><label>Income Scale</label><output id="out_Income">6 / 11</output></div>
+              <input type="range" name="Income" min="1" max="11" step="1" value="6" oninput="document.getElementById('out_Income').textContent=this.value+' / 11'">
+            </div>
+          </div>
+
+          <button type="submit" class="cta">
+            <span id="btnText">Run Risk Assessment</span>
+            <span id="btnLoader" class="hidden">Analyzing<span class="dots">…</span></span>
+          </button>
+          <div id="errorBox" class="error-box hidden"></div>
+        </form>
+      </section>
+
+      <!-- ░░ RIGHT: Result + insights ░░ -->
+      <aside class="side">
+
+        <!-- Result -->
+        <section class="panel result-panel" id="result">
+          <div class="result-empty" id="resultEmpty">
+            <div class="empty-icon">🧪</div>
+            <p>Your risk result will appear here once you run the assessment.</p>
+          </div>
+
+          <div class="result-body hidden" id="resultBody">
+            <!-- Gauge -->
+            <div class="gauge-wrap">
+              <svg class="gauge" viewBox="0 0 200 200">
+                <circle class="gauge-bg" cx="100" cy="100" r="80"></circle>
+                <circle class="gauge-fg" id="gaugeFg" cx="100" cy="100" r="80"></circle>
+              </svg>
+              <div class="gauge-center">
+                <div class="gauge-score" id="gaugeScore">0%</div>
+                <div class="gauge-lbl">Risk Score</div>
+              </div>
+            </div>
+
+            <div class="result-label" id="resultLabel">—</div>
+            <p class="result-advice" id="resultAdvice"></p>
+
+            <div class="probs">
+              <div class="probs-title">Class Probabilities</div>
+              <div class="prob-row">
+                <span class="prob-name">No Diabetes</span>
+                <div class="bar-track"><div id="bar0" class="bar-fill green-bar"></div></div>
+                <span id="pct0" class="prob-pct">0%</span>
+              </div>
+              <div class="prob-row">
+                <span class="prob-name">Pre-Diabetes</span>
+                <div class="bar-track"><div id="bar1" class="bar-fill orange-bar"></div></div>
+                <span id="pct1" class="prob-pct">0%</span>
+              </div>
+              <div class="prob-row">
+                <span class="prob-name">Diabetes</span>
+                <div class="bar-track"><div id="bar2" class="bar-fill red-bar"></div></div>
+                <span id="pct2" class="prob-pct">0%</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Feature importance -->
+        <section class="panel insight-panel">
+          <div class="panel-head">
+            <h2>What drives the model</h2>
+            <p>Top factors the model weighs most, learned from the data.</p>
+          </div>
+          <div id="featChart" class="feat-chart">
+            <div class="feat-loading">Loading model insights…</div>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <strong>DiabetesPredict</strong> — built with Flask, scikit-learn &amp; the BRFSS 2021 dataset.<br />
+    For educational and demonstration purposes only. Not a medical diagnosis.
+  </footer>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
