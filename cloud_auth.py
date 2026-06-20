@@ -46,10 +46,12 @@ def sign_up(email: str, password: str):
         res = client.auth.sign_up({"email": email, "password": password})
         if res.user is None:
             return False, "Could not create the account. Please try again."
-        return True, ("We've sent a confirmation email to your inbox. "
-                      "Please open it and click the confirmation link, "
-                      "then return here and log in. "
-                      "(Don't see it? Check your Spam / Junk folder.)")
+        # Supabase returns a user with an empty 'identities' list when the email
+        # is already registered (anti email-enumeration behaviour).
+        identities = getattr(res.user, "identities", None)
+        if identities is not None and len(identities) == 0:
+            return False, "This email is already registered. Please log in instead."
+        return True, "Account created successfully! Logging you in…"
     except Exception as e:
         return False, _friendly_error(e)
 
