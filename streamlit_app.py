@@ -67,8 +67,20 @@ st.markdown(
       .stApp { background:
         linear-gradient(135deg, #aac6ff 0%, #c9d6ff 35%, #e3d2ff 70%, #ffd6ec 100%)
         fixed !important; }
-      .block-container { padding-top: 2.2rem; max-width: 1180px; }
+      .block-container { padding-top: 2.2rem; padding-bottom: 2rem; max-width: 1180px; }
       h1, h2, h3, h4, p, label, span, div { color: #0f2747; }
+
+      /* Hide the "Press Enter to submit" hint under text inputs */
+      div[data-testid="InputInstructions"] { display: none !important; }
+
+      /* Hide the invisible cookie-manager component so it takes no space */
+      iframe[title="extra_streamlit_components.CookieManager.cookie_manager"] {
+        display: none !important;
+      }
+      div[data-testid="stElementContainer"]:has(
+        iframe[title="extra_streamlit_components.CookieManager.cookie_manager"]) {
+        display: none !important;
+      }
 
       /* ── Glassmorphism for all boxes (clear frosted glass) ── */
       div[data-testid="stMetric"],
@@ -179,6 +191,31 @@ with st.sidebar:
         """,
         unsafe_allow_html=True,
     )
+    st.caption(_email)
+
+    st.divider()
+    st.markdown("#### :material/psychology: About this tool")
+    st.markdown(
+        "Uses a **Random Forest** model trained on **236,000+** real health "
+        "records (CDC BRFSS 2021) to estimate diabetes risk across 3 levels."
+    )
+    st.markdown(
+        ":material/target: **Accuracy:** ~80%  \n"
+        ":material/database: **Records:** 236K  \n"
+        ":material/category: **Features:** 21"
+    )
+
+    st.divider()
+    st.markdown("#### :material/lightbulb: Did you know?")
+    st.markdown(
+        "- Type 2 diabetes is largely **preventable** with a healthy lifestyle.\n"
+        "- **High BP, cholesterol & BMI** are top risk factors.\n"
+        "- **Early detection** helps prevent serious complications.\n"
+        "- 30 min of daily activity can **lower your risk** significantly."
+    )
+
+    st.caption(":material/medical_services: Educational use only — "
+               "not a medical diagnosis.")
     if st.button("Logout", icon=":material/logout:", use_container_width=True):
         try:
             # Overwrite with an empty value (more reliable than delete across sessions)
