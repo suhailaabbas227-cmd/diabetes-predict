@@ -160,15 +160,7 @@ if st.session_state.user is None:
                         st.error("Passwords do not match.")
                     else:
                         ok, msg = auth.sign_up(se, sp)
-                        if ok:
-                            email = se.strip().lower()
-                            st.session_state.user = email
-                            st.session_state.just_logged_out = False
-                            cookies.set("dp_user", email, key="cookie_set_signup")
-                            st.success(msg)
-                            st.rerun()
-                        else:
-                            st.error(msg)
+                        (st.success if ok else st.error)(msg)
 
     st.stop()
 

@@ -51,7 +51,8 @@ def sign_up(email: str, password: str):
         identities = getattr(res.user, "identities", None)
         if identities is not None and len(identities) == 0:
             return False, "This email is already registered. Please log in instead."
-        return True, "Account created successfully! Logging you in…"
+        return True, ("Account created! Please check your email inbox (and the "
+                      "Spam folder) and click the confirmation link, then log in.")
     except Exception as e:
         return False, _friendly_error(e)
 
