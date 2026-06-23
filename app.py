@@ -19,8 +19,8 @@ except Exception:
 app = Flask(__name__)
 
 # ── Load trained model + scaler ──────────────────────────────
-model  = joblib.load('diabetes_model.pkl')
-scaler = joblib.load('scaler.pkl')
+model  = joblib.load('models/diabetes_model.pkl')
+scaler = joblib.load('models/scaler.pkl')
 
 # Feature order — MUST match the training data
 FEATURES = [

@@ -29,8 +29,8 @@ FEATURES = [
 ]
 LABELS = {0: "No Diabetes", 1: "Pre-Diabetes", 2: "Diabetes"}
 
-model  = joblib.load("diabetes_model.pkl")
-scaler = joblib.load("scaler.pkl")
+model  = joblib.load("models/diabetes_model.pkl")
+scaler = joblib.load("models/scaler.pkl")
 print("Model loaded:", type(model).__name__)
 print("=" * 60)
 
@@ -72,7 +72,7 @@ for name, p in [("Healthy young person", healthy), ("High-risk older person", hi
 print("=" * 60)
 print("\nPART 2 — Real data se test (model kitna sahi hai)\n")
 
-df = pd.read_csv("diabetes_012_health_indicators_BRFSS2021.csv")
+df = pd.read_csv("data/diabetes_012_health_indicators_BRFSS2021.csv")
 df["Diabetes_012"] = df["Diabetes_012"].astype(int)
 
 # 10 random asli patients: prediction vs asli jawab

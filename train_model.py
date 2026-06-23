@@ -33,7 +33,7 @@ print("=" * 55)
 print("  DIABETES PREDICTION — MODEL TRAINING")
 print("=" * 55)
 
-df = pd.read_csv('diabetes_012_health_indicators_BRFSS2021.csv')
+df = pd.read_csv('data/diabetes_012_health_indicators_BRFSS2021.csv')
 df['Diabetes_012'] = df['Diabetes_012'].astype(int)
 
 print(f"\n✅ Dataset loaded: {df.shape[0]:,} rows × {df.shape[1]} columns")
@@ -106,8 +106,8 @@ else:
     y_pred_best = y_pred_lr
 
 print(f"🏆 Best Model : {best_name}")
-joblib.dump(best_model, 'diabetes_model.pkl', compress=3)
-joblib.dump(scaler,     'scaler.pkl',         compress=3)
+joblib.dump(best_model, 'models/diabetes_model.pkl', compress=3)
+joblib.dump(scaler,     'models/scaler.pkl',         compress=3)
 print("✅ diabetes_model.pkl saved")
 print("✅ scaler.pkl saved")
 
@@ -124,7 +124,7 @@ plt.title(f'Confusion Matrix — {best_name}')
 plt.xlabel('Predicted')
 plt.ylabel('Actual')
 plt.tight_layout()
-plt.savefig('confusion_matrix.png', dpi=120)
+plt.savefig('figures/confusion_matrix.png', dpi=120)
 print("✅ confusion_matrix.png saved")
 
 # ── 10. Feature Importance ────────────────────────────────────

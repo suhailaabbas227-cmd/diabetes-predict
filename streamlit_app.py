@@ -23,8 +23,8 @@ st.set_page_config(
 # ── Load model + scaler (cached) ─────────────────────────────
 @st.cache_resource
 def load_artifacts():
-    model  = joblib.load("diabetes_model.pkl")
-    scaler = joblib.load("scaler.pkl")
+    model  = joblib.load("models/diabetes_model.pkl")
+    scaler = joblib.load("models/scaler.pkl")
     return model, scaler
 
 model, scaler = load_artifacts()
