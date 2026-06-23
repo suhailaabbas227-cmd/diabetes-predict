@@ -4,7 +4,9 @@ A machine-learning web app that estimates a person's diabetes risk (No Diabetes 
 Pre-Diabetes / Diabetes) from 21 health indicators, trained on **236,000+ real
 records** from the CDC's BRFSS 2021 survey.
 
-**Live app:** _add your Streamlit Cloud link here after deploying_
+**Live app:** https://diabetes-predict-3h4spluy67pptqrgj65twa.streamlit.app
+
+**Run the ML notebook:** [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/suhailaabbas227-cmd/diabetes-predict/blob/main/Diabetes_ML_Colab.ipynb)
 
 ---
 
