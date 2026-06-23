@@ -12,6 +12,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import (
     classification_report, confusion_matrix,
     accuracy_score, roc_auc_score
@@ -96,16 +97,28 @@ y_pred_lr = lr.predict(X_test_sc)
 acc_lr = accuracy_score(y_test, y_pred_lr)
 print(f"   Accuracy : {acc_lr:.4f}  ({acc_lr*100:.2f}%)")
 
-# ── 8. Select & Save Best Model ──────────────────────────────
-print("\n" + "─" * 40)
-if acc_rf >= acc_lr:
-    best_model, best_name = rf, "Random Forest"
-    y_pred_best = y_pred_rf
-else:
-    best_model, best_name = lr, "Logistic Regression"
-    y_pred_best = y_pred_lr
+# ── 7b. Model 3 — Decision Tree ──────────────────────────────
+print("🌳 Training Decision Tree...")
+dt = DecisionTreeClassifier(max_depth=14, min_samples_leaf=20, random_state=42)
+dt.fit(X_train_sc, y_train_res)
+y_pred_dt = dt.predict(X_test_sc)
+acc_dt = accuracy_score(y_test, y_pred_dt)
+print(f"   Accuracy : {acc_dt:.4f}  ({acc_dt*100:.2f}%)")
 
-print(f"🏆 Best Model : {best_name}")
+# ── 8. Compare All 3 Models & Save the Best ──────────────────
+print("\n" + "─" * 40)
+print("📊 Model Comparison:")
+results = {
+    "Random Forest":       (rf, acc_rf, y_pred_rf),
+    "Logistic Regression": (lr, acc_lr, y_pred_lr),
+    "Decision Tree":       (dt, acc_dt, y_pred_dt),
+}
+for name, (_, acc, _) in sorted(results.items(), key=lambda kv: kv[1][1], reverse=True):
+    print(f"   {name:22s}: {acc*100:.2f}%")
+
+best_name = max(results, key=lambda n: results[n][1])
+best_model, _, y_pred_best = results[best_name]
+print(f"\n🏆 Best Model : {best_name}")
 joblib.dump(best_model, 'models/diabetes_model.pkl', compress=3)
 joblib.dump(scaler,     'models/scaler.pkl',         compress=3)
 print("✅ diabetes_model.pkl saved")
